@@ -136,7 +136,7 @@ static block_t *read_block(FILE *file, int sw)
 
 	if (n >= 0)
 		b->transactions = llist_create(MT_SUPPORT_FALSE);
-	for (i = 0; i < n; i++)
+	for (i = 0; i < n || (n >= 0 && !b->transactions); i++)
 	{
 		tx = read_tx(file, sw);
 		if (!tx || !b->transactions ||
@@ -146,12 +146,6 @@ static block_t *read_block(FILE *file, int sw)
 			block_destroy(b);
 			return (NULL);
 		}
-	}
-
-	if (n == 0 && !b->transactions)
-	{
-		block_destroy(b);
-		return (NULL);
 	}
 
 	return (b);

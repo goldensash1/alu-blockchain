@@ -18,10 +18,8 @@ int main(void)
 
 	coinbase = coinbase_create(owner, 1);
 	_transaction_print(coinbase);
-	transaction_destroy(coinbase);
 	coinbase = coinbase_create(owner, 2);
 	_transaction_print(coinbase);
-	transaction_destroy(coinbase);
 
 	/* Cleanup */
 	EC_KEY_free(owner);

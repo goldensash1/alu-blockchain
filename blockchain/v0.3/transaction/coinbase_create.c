@@ -27,6 +27,20 @@ static int fill_coinbase(transaction_t *tx, tx_in_t *in, tx_out_t *out)
 }
 
 /**
+ * discard - Frees a transaction being built, along with its inputs and outputs
+ *
+ * @tx: Transaction to free
+ */
+static void discard(transaction_t *tx)
+{
+	if (tx->inputs)
+		llist_destroy(tx->inputs, 1, free);
+	if (tx->outputs)
+		llist_destroy(tx->outputs, 1, free);
+	free(tx);
+}
+
+/**
  * coinbase_create - Creates a coinbase transaction
  *
  * @receiver: Public key of the miner, who receives the coinbase coins
@@ -55,14 +69,14 @@ transaction_t *coinbase_create(EC_KEY const *receiver, uint32_t block_index)
 	{
 		free(in);
 		free(out);
-		transaction_destroy(tx);
+		discard(tx);
 		return (NULL);
 	}
 
 	memcpy(in->tx_out_hash, &block_index, sizeof(block_index));
 	if (fill_coinbase(tx, in, out) != 0 || !transaction_hash(tx, tx->id))
 	{
-		transaction_destroy(tx);
+		discard(tx);
 		return (NULL);
 	}
 

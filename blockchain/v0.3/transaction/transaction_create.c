@@ -84,6 +84,20 @@ static int sign_inputs(transaction_t *tx, EC_KEY const *sender,
 }
 
 /**
+ * discard - Frees a transaction being built, along with its inputs and outputs
+ *
+ * @tx: Transaction to free
+ */
+static void discard(transaction_t *tx)
+{
+	if (tx->inputs)
+		llist_destroy(tx->inputs, 1, free);
+	if (tx->outputs)
+		llist_destroy(tx->outputs, 1, free);
+	free(tx);
+}
+
+/**
  * transaction_create - Creates a transaction
  *
  * @sender: Private key of the transaction sender
@@ -117,7 +131,7 @@ transaction_t *transaction_create(EC_KEY const *sender,
 		!transaction_hash(tx, tx->id) ||
 		sign_inputs(tx, sender, all_unspent) != 0)
 	{
-		transaction_destroy(tx);
+		discard(tx);
 		return (NULL);
 	}
 

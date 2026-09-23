@@ -26,7 +26,6 @@ int main(void)
 		fprintf(stderr, "Coinbase transaction invalid\n");
 
 	/* Cleanup */
-	transaction_destroy(coinbase);
 	EC_KEY_free(owner);
 
 	return (EXIT_SUCCESS);

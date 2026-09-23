@@ -41,7 +41,6 @@ int main(void)
 	_transaction_print(transaction);
 
 	/* Cleanup */
-	transaction_destroy(transaction);
 	EC_KEY_free(sender);
 	EC_KEY_free(receiver);
 	free(out);

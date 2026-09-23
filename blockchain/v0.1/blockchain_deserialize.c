@@ -1,20 +1,6 @@
 #include "blockchain.h"
 
 /**
- * get_endianness - Gets the endianness of the host
- *
- * Return: HBLK_LITTLE_ENDIAN or HBLK_BIG_ENDIAN
- */
-static uint8_t get_endianness(void)
-{
-	uint16_t x = 1;
-
-	if (*(uint8_t *)&x == 1)
-		return (HBLK_LITTLE_ENDIAN);
-	return (HBLK_BIG_ENDIAN);
-}
-
-/**
  * swap - Reverses the bytes of a value
  *
  * @ptr: Pointer to the value
@@ -87,7 +73,8 @@ static block_t *read_block(FILE *file, int sw)
 static int read_header(FILE *file, uint32_t *count, int *sw)
 {
 	char magic[HBLK_MAGIC_LEN], version[HBLK_VERSION_LEN];
-	uint8_t endian;
+	uint8_t endian, host = HBLK_BIG_ENDIAN;
+	uint16_t probe = 1;
 
 	if (fread(magic, HBLK_MAGIC_LEN, 1, file) != 1 ||
 		fread(version, HBLK_VERSION_LEN, 1, file) != 1 ||
@@ -100,7 +87,9 @@ static int read_header(FILE *file, uint32_t *count, int *sw)
 		(endian != HBLK_LITTLE_ENDIAN && endian != HBLK_BIG_ENDIAN))
 		return (-1);
 
-	*sw = endian != get_endianness();
+	if (*(uint8_t *)&probe == 1)
+		host = HBLK_LITTLE_ENDIAN;
+	*sw = endian != host;
 	if (*sw)
 		swap(count, sizeof(*count));
 

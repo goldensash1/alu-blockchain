@@ -16,7 +16,7 @@ EC_KEY *ec_load(char const *folder)
 {
 	char path[PATH_MAX_LEN];
 	FILE *file;
-	EC_KEY *key = NULL;
+	EC_KEY *key = NULL, *pub = NULL;
 
 	if (!folder)
 		return (NULL);
@@ -37,13 +37,15 @@ EC_KEY *ec_load(char const *folder)
 		EC_KEY_free(key);
 		return (NULL);
 	}
-	if (!PEM_read_EC_PUBKEY(file, &key, NULL, NULL))
+	pub = PEM_read_EC_PUBKEY(file, NULL, NULL, NULL);
+	fclose(file);
+	if (!pub || !EC_KEY_set_public_key(key, EC_KEY_get0_public_key(pub)))
 	{
-		fclose(file);
+		EC_KEY_free(pub);
 		EC_KEY_free(key);
 		return (NULL);
 	}
-	fclose(file);
+	EC_KEY_free(pub);
 
 	return (key);
 }

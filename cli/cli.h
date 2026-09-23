@@ -14,6 +14,7 @@
 #define PROMPT "cli> "
 #define MINE_DATA "Holberton"
 #define PATH_MAX_LEN 4096
+#define FUNDING_BLOCKS 10
 
 /**
  * struct cli_s - State of the CLI
@@ -37,6 +38,7 @@ void print_address(cli_t const *cli);
 int cmd_wallet_load(cli_t *cli, char *args);
 int cmd_wallet_save(cli_t *cli, char *args);
 int cmd_send(cli_t *cli, char *args);
+block_t *mine_block(cli_t *cli);
 int cmd_mine(cli_t *cli, char *args);
 int cmd_info(cli_t *cli, char *args);
 int cmd_load(cli_t *cli, char *args);

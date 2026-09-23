@@ -62,7 +62,8 @@ cd cli && make && ./cli [wallet_folder]
 ```
 
 A wallet (EC key pair) is created at startup, or loaded from `wallet_folder`
-when given. Commands:
+when given. So that coins can be sent right away, 10 starting Blocks are mined
+for the wallet at launch. Commands:
 
 | Command | Description |
 | --- | --- |

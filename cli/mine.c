@@ -84,24 +84,23 @@ static int commit_block(cli_t *cli, block_t *block, block_t const *prev)
 }
 
 /**
- * cmd_mine - Mines a Block and adds it to the Blockchain
+ * mine_block - Mines a Block containing a coinbase transaction and the valid
+ * transactions of the pool, and adds it to the Blockchain
  *
  * @cli: State of the CLI
- * @args: Unused
  *
- * Return: 0 upon success, or -1 upon failure
+ * Return: Pointer to the mined Block, or NULL upon failure
  */
-int cmd_mine(cli_t *cli, char *args)
+block_t *mine_block(cli_t *cli)
 {
 	block_t *block, *prev;
 	transaction_t *coinbase;
 
-	(void)args;
 	prev = llist_get_node_at(cli->blockchain->chain,
 		llist_size(cli->blockchain->chain) - 1);
 	block = block_create(prev, (int8_t *)MINE_DATA, strlen(MINE_DATA));
 	if (!block)
-		return (fail("Error: unable to create a Block"));
+		return (NULL);
 
 	block->info.difficulty = blockchain_difficulty(cli->blockchain);
 	coinbase = coinbase_create(cli->wallet, block->info.index);
@@ -111,7 +110,7 @@ int cmd_mine(cli_t *cli, char *args)
 	{
 		transaction_destroy(coinbase);
 		block_destroy(block);
-		return (fail("Error: unable to create a coinbase"));
+		return (NULL);
 	}
 
 	fill_block(cli, block);
@@ -119,8 +118,27 @@ int cmd_mine(cli_t *cli, char *args)
 	if (commit_block(cli, block, prev) != 0)
 	{
 		block_destroy(block);
-		return (fail("Error: the mined Block is not valid"));
+		return (NULL);
 	}
+
+	return (block);
+}
+
+/**
+ * cmd_mine - Mines a Block and adds it to the Blockchain
+ *
+ * @cli: State of the CLI
+ * @args: Unused
+ *
+ * Return: 0 upon success, or -1 upon failure
+ */
+int cmd_mine(cli_t *cli, char *args)
+{
+	block_t *block = mine_block(cli);
+
+	(void)args;
+	if (!block)
+		return (fail("Error: unable to mine a Block"));
 
 	printf("Block mined: index %u, difficulty %u, %d transaction(s), hash ",
 		block->info.index, block->info.difficulty,

@@ -92,7 +92,7 @@ int cmd_send(cli_t *cli, char *args)
 
 	tx = create_tx(cli, amount, pub);
 	if (!tx)
-		return (fail("Error: unable to create the transaction"));
+		return (fail("Error: not enough coins, or invalid address"));
 	if (!transaction_is_valid(tx, cli->blockchain->unspent) ||
 		llist_add_node(cli->pool, tx, ADD_NODE_REAR) != 0)
 	{

@@ -100,6 +100,7 @@ int main(int ac, char **av)
 	cli_t cli;
 	char *line = NULL;
 	size_t cap = 0;
+	int i;
 
 	memset(&cli, 0, sizeof(cli));
 	if (ac > 1)
@@ -115,6 +116,9 @@ int main(int ac, char **av)
 		return (EXIT_FAILURE);
 	}
 
+	for (i = 0; i < FUNDING_BLOCKS; i++)
+		mine_block(&cli);
+	printf("%d starting Blocks mined for the wallet\n", FUNDING_BLOCKS);
 	print_address(&cli);
 	for (;;)
 	{

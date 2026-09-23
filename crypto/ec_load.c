@@ -21,7 +21,7 @@ EC_KEY *ec_load(char const *folder)
 	if (!folder)
 		return (NULL);
 
-	snprintf(path, sizeof(path), "%s/key.pem", folder);
+	snprintf(path, sizeof(path), "%s/" PRI_FILENAME, folder);
 	file = fopen(path, "r");
 	if (!file)
 		return (NULL);
@@ -30,7 +30,7 @@ EC_KEY *ec_load(char const *folder)
 	if (!key)
 		return (NULL);
 
-	snprintf(path, sizeof(path), "%s/key_pub.pem", folder);
+	snprintf(path, sizeof(path), "%s/" PUB_FILENAME, folder);
 	file = fopen(path, "r");
 	if (!file)
 	{

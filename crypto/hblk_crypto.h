@@ -12,6 +12,10 @@
  */
 #define EC_CURVE NID_secp256k1
 
+/* Names of the files holding the private and public keys */
+#define PRI_FILENAME "key.pem"
+#define PUB_FILENAME "key_pub.pem"
+
 /* Length in bytes of an uncompressed EC public key, secp256k1 */
 #define EC_PUB_LEN 65
 

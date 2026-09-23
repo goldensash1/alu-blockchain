@@ -1,6 +1,23 @@
 #include "transaction.h"
 
 /**
+ * refers - Checks whether a transaction input consumes an unspent output
+ *
+ * @in: Transaction input
+ * @unspent: Unspent output
+ *
+ * Return: 1 if @in references @unspent, or 0 otherwise
+ */
+static int refers(tx_in_t const *in, unspent_tx_out_t const *unspent)
+{
+	size_t len = SHA256_DIGEST_LENGTH;
+
+	return (in && !memcmp(in->block_hash, unspent->block_hash, len) &&
+		!memcmp(in->tx_id, unspent->tx_id, len) &&
+		!memcmp(in->tx_out_hash, unspent->out.hash, len));
+}
+
+/**
  * is_spent - Checks whether an unspent output is consumed by a transaction
  * list
  *
@@ -12,19 +29,14 @@
 static int is_spent(llist_t *transactions, unspent_tx_out_t const *unspent)
 {
 	transaction_t *tx;
-	tx_in_t *in;
 	int i, j, n = llist_size(transactions);
 
 	for (i = 0; i < n; i++)
 	{
 		tx = llist_get_node_at(transactions, i);
 		for (j = 0; tx && j < llist_size(tx->inputs); j++)
-		{
-			in = llist_get_node_at(tx->inputs, j);
-			if (in && !memcmp(in->tx_out_hash, unspent->out.hash,
-				sizeof(in->tx_out_hash)))
+			if (refers(llist_get_node_at(tx->inputs, j), unspent))
 				return (1);
-		}
 	}
 
 	return (0);

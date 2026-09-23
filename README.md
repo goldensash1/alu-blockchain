@@ -52,3 +52,28 @@ which produces `libhblk_crypto.a`.
 ## Author
 
 Golden Munyankindi
+
+## CLI
+
+`cli/` contains a small command interpreter on top of the Blockchain library.
+
+```
+cd cli && make && ./cli [wallet_folder]
+```
+
+A wallet (EC key pair) is created at startup, or loaded from `wallet_folder`
+when given. Commands:
+
+| Command | Description |
+| --- | --- |
+| `wallet_load <path>` | Load the wallet from a folder |
+| `wallet_save <path>` | Save the wallet (PEM) into a folder, creating it if needed |
+| `send <amount> <address>` | Create a transaction and add it to the pool |
+| `mine` | Mine a Block with a coinbase and the valid pooled transactions |
+| `info` | Show Blocks, unspent outputs, pending transactions and balance |
+| `load <path>` | Load a Blockchain from a file, replacing the local one |
+| `save <path>` | Save the local Blockchain into a file |
+| `help`, `exit` | Show the commands, or quit |
+
+`<address>` is a public key in hexadecimal (130 characters), as printed by the
+CLI at startup and by `info`.
